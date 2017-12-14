@@ -1,4 +1,4 @@
-# meelel
+# Meelel
 
 The aim here is to build a simple blog library in Golang that I can integrate to my App Engine sites.
 
