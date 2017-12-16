@@ -20,14 +20,9 @@ import (
 	"errors"
 	"time"
 
-	"google.golang.org/appengine/datastore"
-
 	"github.com/mjibson/goon"
+	"google.golang.org/appengine/datastore"
 )
-
-type Meelel struct {
-	g *goon.Goon
-}
 
 type Post struct {
 	_kind           string    `goon:"kind,MeelelPost"`
@@ -39,6 +34,10 @@ type Post struct {
 	PageTitle       string    `datastore:"mt,noindex"`
 	MetaDescription string    `datastore:"md,noindex"`
 	Content         string    `datastore:"co,noindex`
+}
+
+type Meelel struct {
+	g *goon.Goon
 }
 
 func New(c context.Context) *Meelel {
@@ -104,4 +103,29 @@ func (m Meelel) DeletePost(id string) error {
 		return err
 	}
 	return nil
+}
+
+func (m Meelel) GetRecentPosts(limit int) ([]*Post, error) {
+	ps := make([]*Post, 0)
+	if _, err := m.g.GetAll(datastore.NewQuery("MeelelPost").Order("-c").Limit(limit).KeysOnly(), &ps); err != nil {
+		return nil, err
+	}
+	if len(ps) > 0 {
+		if err := m.g.GetMulti(ps); err != nil {
+			return nil, err
+		}
+	}
+	return ps, nil
+}
+
+func (m Meelel) GetAllPostIds() ([]string, error) {
+	if keys, err := m.g.GetAll(datastore.NewQuery("MeelelPost").KeysOnly(), nil); err != nil {
+		return nil, err
+	} else {
+		ids := make([]string, 0, len(keys))
+		for _, key := range keys {
+			ids = append(ids, key.StringID())
+		}
+		return ids, nil
+	}
 }
