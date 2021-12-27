@@ -20,8 +20,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/mjibson/goon"
-	"google.golang.org/appengine/datastore"
+	"github.com/mjibson/goon/v2"
+	"google.golang.org/appengine/v2/datastore"
 )
 
 type Post struct {
